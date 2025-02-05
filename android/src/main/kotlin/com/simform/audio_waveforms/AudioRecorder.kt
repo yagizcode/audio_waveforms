@@ -101,6 +101,10 @@ class AudioRecorder : PluginRegistry.RequestPermissionsResultListener {
     }
 
     fun startRecorder(result: MethodChannel.Result, recorder: MediaRecorder?, useLegacy: Boolean) {
+           val intent = Intent(context, MicService::class.java).apply {
+            action = MicService.ACTION_START
+            putExtra(MicService.EXTRA_FILE_PATH, filePath)
+        }
         try {
             useLegacyNormalization = useLegacy
             recorder?.start()
@@ -109,6 +113,7 @@ class AudioRecorder : PluginRegistry.RequestPermissionsResultListener {
             Log.e(LOG_TAG, "Failed to start recording")
         }
     }
+    
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun pauseRecording(result: MethodChannel.Result, recorder: MediaRecorder?) {
