@@ -63,6 +63,8 @@ class AudioRecorder : PluginRegistry.RequestPermissionsResultListener {
         try {
             val hashMap: HashMap<String, Any?> = HashMap()
             try {
+                val intent = Intent(this, MicService::class.java)
+                stopService(intent)
                 recorder?.stop()
 
                 val duration = getDuration(path)
@@ -102,6 +104,8 @@ class AudioRecorder : PluginRegistry.RequestPermissionsResultListener {
 
     fun startRecorder(result: MethodChannel.Result, recorder: MediaRecorder?, useLegacy: Boolean) {
         try {
+            val intent = Intent(this, MicService::class.java)
+            startService(intent)
             useLegacyNormalization = useLegacy
             recorder?.start()
             result.success(true)
