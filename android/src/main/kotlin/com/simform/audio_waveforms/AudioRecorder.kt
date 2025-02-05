@@ -14,7 +14,6 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.PluginRegistry
 import java.io.IOException
 import kotlin.math.log10
-import android.app.Activity
 import android.content.Context
 import android.content.Intent // ✅ FIX: Import Intent
 
