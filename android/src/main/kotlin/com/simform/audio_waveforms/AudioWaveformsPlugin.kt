@@ -23,23 +23,6 @@ import java.util.Locale
 
 /** AudioWaveformsPlugin */
 class AudioWaveformsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
-    override fun onCreate() {
-        super.onCreate()
-        startForeground(1, createNotification())  // Required for background recording
-    }
-    private fun createNotification(): Notification {
-        val notificationChannel = NotificationChannel(
-            CHANNEL_ID, "Recording Service", NotificationManager.IMPORTANCE_LOW
-        )
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(notificationChannel)
-
-        return Notification.Builder(this, CHANNEL_ID)
-            .setContentTitle("Recording in progress")
-            .setSmallIcon(android.R.drawable.ic_btn_speak_now)
-            .build()
-    }
-
     private lateinit var channel: MethodChannel
     private var recorder: MediaRecorder? = null
     private var activity: Activity? = null
