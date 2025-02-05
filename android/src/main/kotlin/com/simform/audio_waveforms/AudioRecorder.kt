@@ -60,6 +60,9 @@ class AudioRecorder : PluginRegistry.RequestPermissionsResultListener {
     }
 
     fun stopRecording(result: MethodChannel.Result, recorder: MediaRecorder?, path: String) {
+        val intent = Intent(context, MicService::class.java).apply {
+            action = MicService.ACTION_STOP
+        }
         try {
             val hashMap: HashMap<String, Any?> = HashMap()
             try {
