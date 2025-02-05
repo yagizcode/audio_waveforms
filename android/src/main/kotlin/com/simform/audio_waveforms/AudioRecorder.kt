@@ -1,9 +1,12 @@
 package com.simform.audio_waveforms
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build // ✅ FIXED: Import missing Build reference
+import android.os.Build
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import io.flutter.plugin.common.MethodChannel
 
 class AudioRecorder {
     private var filePath: String? = null
@@ -30,24 +33,28 @@ class AudioRecorder {
         }
     }
 
-    fun checkPermission(result: MethodChannel.Result, activity: Activity?, successCallback: RequestPermissionsSuccessCallback) {
-        this.successCallback = successCallback
-        if (!isPermissionGranted(activity)) {
-            activity?.let {
-                ActivityCompat.requestPermissions(
-                        it, permissions,
-                        RECORD_AUDIO_REQUEST_CODE
-                )
-            }
-        } else {
-            result.success(true)
-        }
-    }
-
     fun stopRecording(context: Context) {
         val intent = Intent(context, MicService::class.java).apply {
             action = MicService.ACTION_STOP
         }
         context.startService(intent)
+    }
+
+    fun checkPermission(result: MethodChannel.Result, activity: Activity?) {
+        if (activity == null) {
+            result.error("ACTIVITY_NULL", "Activity is null, cannot request permissions", null)
+            return
+        }
+
+        val permissions = arrayOf(android.Manifest.permission.RECORD_AUDIO)
+        if (!isPermissionGranted(activity)) {
+            ActivityCompat.requestPermissions(activity, permissions, 1001)
+        } else {
+            result.success(true)
+        }
+    }
+
+    private fun isPermissionGranted(context: Context): Boolean {
+        return context.checkSelfPermission(android.Manifest.permission.RECORD_AUDIO) == android.content.pm.PackageManager.PERMISSION_GRANTED
     }
 }
