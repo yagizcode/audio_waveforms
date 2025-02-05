@@ -15,6 +15,9 @@ class MicService : Service() {
     
     companion object {
         const val CHANNEL_ID = "MicServiceChannel"
+        const val ACTION_START = "ACTION_START"
+        const val ACTION_STOP = "ACTION_STOP"
+        const val EXTRA_FILE_PATH = "EXTRA_FILE_PATH"
     }
 
     private var recorder: MediaRecorder? = null
@@ -23,9 +26,28 @@ class MicService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        when (intent?.action) {
+            ACTION_START -> {
+                filePath = intent.getStringExtra(EXTRA_FILE_PATH)
+                startForegroundService()
+                startRecording()
+            }
+            ACTION_STOP -> {
+                stopRecording()
+                stopForeground(true)
+                stopSelf()
+            }
+        }
+        return START_STICKY
+    }
+
+    private fun startForegroundService() {
         val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Recording")
-            .setContentText("SmartNoter is recording.")
+            .setContentTitle("Recording in Progress")
+            .setContentText("Your audio is being recorded in the background.")
             .setSmallIcon(R.mipmap.ic_launcher)
             .build()
         startForeground(1, notification)
@@ -41,12 +63,6 @@ class MicService : Service() {
             val manager = getSystemService(NotificationManager::class.java)
             manager?.createNotificationChannel(serviceChannel)
         }
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        filePath = intent?.getStringExtra("filePath")
-        startRecording()
-        return START_STICKY
     }
 
     private fun startRecording() {
@@ -70,11 +86,6 @@ class MicService : Service() {
         }
     }
 
-    override fun onDestroy() {
-        stopRecording()
-        super.onDestroy()
-    }
-
     private fun stopRecording() {
         recorder?.apply {
             try {
@@ -89,7 +100,5 @@ class MicService : Service() {
         recorder = null
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        return null
-    }
+    override fun onBind(intent: Intent?): IBinder? = null
 }
