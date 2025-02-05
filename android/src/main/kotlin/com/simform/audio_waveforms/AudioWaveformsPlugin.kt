@@ -22,9 +22,10 @@ class AudioWaveformsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private var audioRecorder = AudioRecorder()
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, Constants.methodChannelName)
+        channel.setMethodCallHandler(this)
+        audioRecorder = AudioRecorder()
         applicationContext = flutterPluginBinding.applicationContext
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "audio_waveforms")
-        channel.setMethodCallHandler(this) // FIXED: Ensure this is properly set
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
