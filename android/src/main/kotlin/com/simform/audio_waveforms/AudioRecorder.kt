@@ -20,10 +20,12 @@ import android.content.Intent // ✅ FIX: Import Intent
 private const val LOG_TAG = "AudioWaveforms"
 private const val RECORD_AUDIO_REQUEST_CODE = 1001
 
-class AudioRecorder : PluginRegistry.RequestPermissionsResultListener {
+class AudioRecorder(private val context: Context) : PluginRegistry.RequestPermissionsResultListener {
     private var permissions = arrayOf(Manifest.permission.RECORD_AUDIO)
     private var useLegacyNormalization = false
     private var successCallback: RequestPermissionsSuccessCallback? = null
+    private var filePath: String? = null
+
 
     fun getDecibel(result: MethodChannel.Result, recorder: MediaRecorder?) {
         if (useLegacyNormalization) {
@@ -43,6 +45,8 @@ class AudioRecorder : PluginRegistry.RequestPermissionsResultListener {
         recorder: MediaRecorder?,
         recorderSettings: RecorderSettings
     ) {
+
+        filePath = recorderSettings.path // ✅ Store file path globally
         recorder?.apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
             setOutputFormat(getOutputFormat(recorderSettings.outputFormat))
@@ -65,30 +69,7 @@ class AudioRecorder : PluginRegistry.RequestPermissionsResultListener {
         val intent = Intent(context, MicService::class.java).apply {
             action = MicService.ACTION_STOP
         }
-        try {
-            val hashMap: HashMap<String, Any?> = HashMap()
-            try {
-                recorder?.stop()
-
-                val duration = getDuration(path)
-
-                hashMap[Constants.resultFilePath] = path
-                hashMap[Constants.resultDuration] = duration
-            } catch (e: RuntimeException) {
-                // Stop was called immediately after start which causes stop() call to fail.
-                hashMap[Constants.resultFilePath] = null
-                hashMap[Constants.resultDuration] = -1
-            }
-
-            recorder?.apply {
-                reset()
-                release()
-            }
-
-            result.success(hashMap)
-        } catch (e: IllegalStateException) {
-            Log.e(LOG_TAG, "Failed to stop recording")
-        }
+        context.startService(intent) // ✅ FIX: Use context properly
     }
 
     private fun getDuration(path: String): Int {
@@ -106,18 +87,19 @@ class AudioRecorder : PluginRegistry.RequestPermissionsResultListener {
     }
 
     fun startRecorder(result: MethodChannel.Result, recorder: MediaRecorder?, useLegacy: Boolean) {
-           val intent = Intent(context, MicService::class.java).apply {
-            action = MicService.ACTION_START
-            putExtra(MicService.EXTRA_FILE_PATH, filePath)
-        }
-        try {
-            useLegacyNormalization = useLegacy
-            recorder?.start()
-            result.success(true)
-        } catch (e: IllegalStateException) {
-            Log.e(LOG_TAG, "Failed to start recording")
-        }
+    val intent = Intent(context, MicService::class.java).apply {
+        action = MicService.ACTION_START
+        putExtra(MicService.EXTRA_FILE_PATH, filePath)
     }
+    context.startService(intent) // ✅ FIX: Use context properly
+    try {
+        useLegacyNormalization = useLegacy
+        recorder?.start()
+        result.success(true)
+    } catch (e: IllegalStateException) {
+        Log.e(LOG_TAG, "Failed to start recording")
+    }
+}
     
 
     @RequiresApi(Build.VERSION_CODES.N)

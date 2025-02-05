@@ -26,7 +26,7 @@ class AudioWaveformsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var channel: MethodChannel
     private var recorder: MediaRecorder? = null
     private var activity: Activity? = null
-    private lateinit var audioRecorder: AudioRecorder
+    private var audioRecorder = AudioRecorder(applicationContext) // ✅ FIX: Pass context
     private var recorderSettings = RecorderSettings(path = null, bitRate = null)
     private lateinit var applicationContext: Context
     private var audioPlayers = mutableMapOf<String, AudioPlayer?>()
