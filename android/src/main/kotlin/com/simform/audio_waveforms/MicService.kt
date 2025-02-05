@@ -12,7 +12,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 
 class MicService : Service() {
-    
+
     companion object {
         const val CHANNEL_ID = "MicServiceChannel"
         const val ACTION_START = "ACTION_START"
@@ -48,7 +48,7 @@ class MicService : Service() {
         val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Recording in Progress")
             .setContentText("Your audio is being recorded in the background.")
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_launcher) // FIXED: Use a valid drawable resource
             .build()
         startForeground(1, notification)
     }

@@ -2,8 +2,6 @@ package com.simform.audio_waveforms
 
 import android.content.Context
 import android.content.Intent
-import android.media.MediaRecorder
-import android.os.Build
 import android.util.Log
 
 class AudioRecorder {

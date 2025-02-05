@@ -22,9 +22,9 @@ class AudioWaveformsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private var audioRecorder = AudioRecorder()
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "audio_waveforms")
-        channel.setMethodCallHandler(this)
         applicationContext = flutterPluginBinding.applicationContext
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "audio_waveforms")
+        channel.setMethodCallHandler(this) // FIXED: Ensure this is properly set
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -33,14 +33,14 @@ class AudioWaveformsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 val filePath = call.argument<String>("filePath")
                 if (filePath != null) {
                     audioRecorder.initRecorder(filePath)
-                    audioRecorder.startRecorder(activity, applicationContext)
+                    audioRecorder.startRecorder(applicationContext) // FIXED: Use applicationContext
                     result.success(null)
                 } else {
                     result.error("INVALID_PATH", "File path is required", null)
                 }
             }
             "stopRecording" -> {
-                audioRecorder.stopRecording(applicationContext)
+                audioRecorder.stopRecording(applicationContext) // FIXED: Use applicationContext
                 result.success(null)
             }
             else -> result.notImplemented()
