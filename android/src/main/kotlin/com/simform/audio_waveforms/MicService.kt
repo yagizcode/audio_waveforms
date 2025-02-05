@@ -48,7 +48,7 @@ class MicService : Service() {
         val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Recording in Progress")
             .setContentText("Your audio is being recorded in the background.")
-            .setSmallIcon(R.drawable.ic_launcher) // FIXED: Use a valid drawable resource
+            .setSmallIcon(android.R.drawable.ic_btn_speak_now) // ✅ FIXED: Use valid system drawable
             .build()
         startForeground(1, notification)
     }

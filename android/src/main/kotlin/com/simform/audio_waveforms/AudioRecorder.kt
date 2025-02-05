@@ -2,6 +2,7 @@ package com.simform.audio_waveforms
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build // ✅ FIXED: Import missing Build reference
 import android.util.Log
 
 class AudioRecorder {
