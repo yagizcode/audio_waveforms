@@ -3,8 +3,6 @@ package com.simform.audio_waveforms
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
-import android.media.MediaMetadataRetriever
-import android.media.MediaMetadataRetriever.METADATA_KEY_DURATION
 import android.media.MediaRecorder
 import android.os.Build
 import android.util.Log
