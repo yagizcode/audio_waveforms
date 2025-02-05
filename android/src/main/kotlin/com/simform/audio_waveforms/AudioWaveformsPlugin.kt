@@ -26,9 +26,9 @@ class AudioWaveformsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var channel: MethodChannel
     private var recorder: MediaRecorder? = null
     private var activity: Activity? = null
-    private var audioRecorder = AudioRecorder(applicationContext) // ✅ FIX: Pass context
     private var recorderSettings = RecorderSettings(path = null, bitRate = null)
     private lateinit var applicationContext: Context
+    private lateinit var audioRecorder: AudioRecorder
     private var audioPlayers = mutableMapOf<String, AudioPlayer?>()
     private var extractors = mutableMapOf<String, WaveformExtractor?>()
     private var pluginBinding: ActivityPluginBinding? = null
@@ -36,8 +36,8 @@ class AudioWaveformsPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, Constants.methodChannelName)
         channel.setMethodCallHandler(this)
-        audioRecorder = AudioRecorder()
         applicationContext = flutterPluginBinding.applicationContext
+        audioRecorder = AudioRecorder(applicationContext)
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
