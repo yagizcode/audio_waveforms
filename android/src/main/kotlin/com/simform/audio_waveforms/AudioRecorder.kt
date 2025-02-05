@@ -30,6 +30,20 @@ class AudioRecorder {
         }
     }
 
+    fun checkPermission(result: MethodChannel.Result, activity: Activity?, successCallback: RequestPermissionsSuccessCallback) {
+        this.successCallback = successCallback
+        if (!isPermissionGranted(activity)) {
+            activity?.let {
+                ActivityCompat.requestPermissions(
+                        it, permissions,
+                        RECORD_AUDIO_REQUEST_CODE
+                )
+            }
+        } else {
+            result.success(true)
+        }
+    }
+
     fun stopRecording(context: Context) {
         val intent = Intent(context, MicService::class.java).apply {
             action = MicService.ACTION_STOP
